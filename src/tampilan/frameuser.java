@@ -4,7 +4,10 @@
  */
 package tampilan;
 
+
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
 import kelas.user;
 
 /**
@@ -18,7 +21,44 @@ public class frameuser extends javax.swing.JFrame {
      */
     public frameuser() {
         initComponents();
+        loadTabel();
+        reset();
     }
+void loadTabel() {
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("User Name");
+    model.addColumn("Email");
+    model.addColumn("Full Name");
+    model.addColumn("Status");
+
+    try {
+        user us = new user();
+        ResultSet data = us.tampilUser();
+
+        while (data.next()) {
+            model.addRow(new Object[]{
+                data.getString("user_name"),
+                data.getString("user_email"),
+                data.getString("user_fullname"),
+                data.getInt("user_status") == 1 ? "aktif" : "non aktif"
+            });
+        }
+    } catch (SQLException sQLException) {
+    }
+
+    Tuser.setModel(model);
+    
+    
+}
+void reset() {
+    tuser.setText(null);
+    tuser.setEditable(true);
+    temail.setText(null);
+    tpassword.setText(null);
+    tfullname.setText(null);
+    cstatus.setSelectedItem(null);
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,14 +74,16 @@ public class frameuser extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         temail = new javax.swing.JTextField();
-        tpassword = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         tfullname = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         cstatus = new javax.swing.JComboBox<>();
         btambah = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Tuser = new javax.swing.JTable();
+        bhapus = new javax.swing.JButton();
+        bubah = new javax.swing.JButton();
+        tpassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -63,12 +105,6 @@ public class frameuser extends javax.swing.JFrame {
             }
         });
 
-        tpassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tpasswordActionPerformed(evt);
-            }
-        });
-
         jLabel4.setText("fullname");
 
         jLabel5.setText("status");
@@ -87,38 +123,69 @@ public class frameuser extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("jButton2");
+        Tuser.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        Tuser.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TuserMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(Tuser);
 
-        jButton3.setText("jButton3");
+        bhapus.setText("hapus");
+        bhapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bhapusActionPerformed(evt);
+            }
+        });
+
+        bubah.setText("ubah");
+        bubah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bubahActionPerformed(evt);
+            }
+        });
+
+        tpassword.setText("jPasswordField1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cstatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(tpassword)
-                        .addComponent(temail, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                        .addComponent(tuser)
-                        .addComponent(tfullname)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(btambah)
-                .addGap(80, 80, 80)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btambah)
+                        .addGap(38, 38, 38)
+                        .addComponent(bhapus)
+                        .addGap(29, 29, 29)
+                        .addComponent(bubah))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cstatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(temail, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                            .addComponent(tuser)
+                            .addComponent(tfullname)
+                            .addComponent(tpassword))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 547, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,9 +213,12 @@ public class frameuser extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btambah)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap(56, Short.MAX_VALUE))
+                    .addComponent(bhapus)
+                    .addComponent(bubah))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 260, Short.MAX_VALUE))
         );
 
         pack();
@@ -157,10 +227,6 @@ public class frameuser extends javax.swing.JFrame {
     private void tuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tuserActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tuserActionPerformed
-
-    private void tpasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tpasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tpasswordActionPerformed
 
     private void temailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_temailActionPerformed
         // TODO add your handling code here:
@@ -171,7 +237,6 @@ public class frameuser extends javax.swing.JFrame {
     }//GEN-LAST:event_cstatusActionPerformed
 
     private void btambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btambahActionPerformed
-        // TODO add your handling code here:
         try {
             user user = new user();
             user.setUser_name(tuser.getText());
@@ -186,7 +251,56 @@ public class frameuser extends javax.swing.JFrame {
             user.tambahUser();
         } catch (SQLException sQLException) {
         }
+        loadTabel();
+        reset();
     }//GEN-LAST:event_btambahActionPerformed
+
+    private void TuserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TuserMouseClicked
+        int baris = Tuser.rowAtPoint(evt.getPoint ());
+        String userName = Tuser.getValueAt(baris, 0).toString();
+        String email = Tuser.getValueAt(baris, 1).toString();
+        String fullName = Tuser.getValueAt(baris, 2).toString();
+        String status = Tuser.getValueAt(baris, 3).toString();
+
+
+        tuser.setText(userName);
+        tuser.setEditable(false);
+        temail.setText(email);
+        tfullname.setText(fullName);
+        cstatus.setSelectedItem(status);
+    }//GEN-LAST:event_TuserMouseClicked
+
+    private void bubahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubahActionPerformed
+        try {
+            user usr = new user();
+            usr.setUser_name(tuser.getText());
+            usr.setUser_email(temail.getText());
+            usr.setUser_password(tpassword.getText());
+            usr.setUser_fullname(tfullname.getText());
+            if (cstatus.getSelectedItem().equals("Aktif")) {
+                usr.setUser_status(1);
+            } else {
+                usr.setUser_status(0);
+            }
+            usr.ubahUser();
+            } catch (SQLException SQLException) {
+                
+            }
+        loadTabel();
+        reset();
+    }//GEN-LAST:event_bubahActionPerformed
+
+    private void bhapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bhapusActionPerformed
+        try {
+        user usr = new user();
+        usr.setUser_name(tuser.getText());
+        usr.hapusUser();
+    } catch (SQLException sqlException) {
+    }
+        loadTabel();
+        reset();
+
+    }//GEN-LAST:event_bhapusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -224,18 +338,20 @@ public class frameuser extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable Tuser;
+    private javax.swing.JButton bhapus;
     private javax.swing.JButton btambah;
+    private javax.swing.JButton bubah;
     private javax.swing.JComboBox<String> cstatus;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField temail;
     private javax.swing.JTextField tfullname;
-    private javax.swing.JTextField tpassword;
+    private javax.swing.JPasswordField tpassword;
     private javax.swing.JTextField tuser;
     // End of variables declaration//GEN-END:variables
 }
